@@ -16,6 +16,7 @@
  * - fuzzy search expressions (foo~, foo~0.5)
  * - parentheses grouping ( (foo OR bar) AND baz )
  * - field groups ( foo:(bar OR baz) )
+ * - greater/less than expressions ( foo:>10 )
  *
  * The grammar will create a parser which returns an AST for the query in the form of a tree
  * of nodes, which are dictionaries. There are three basic types of expression dictionaries:
@@ -398,6 +399,34 @@ range_operator_exp
             'term_min': term_min,
             'term_max': term_max,
             'inclusive': 'right'
+        };
+    }
+  /  '>=' term_min:ranged_term
+    {
+        return {
+            'term_min': term_min,
+            'inclusive': 'left'
+        };
+    }
+  /  '>' term_min:ranged_term
+    {
+        return {
+            'term_min': term_min,
+            'inclusive': 'none'
+        };
+    }
+  /  '<=' term_max:ranged_term
+    {
+        return {
+            'term_max': term_max,
+            'inclusive': 'right'
+        };
+    }
+  /  '<' term_max:ranged_term
+    {
+        return {
+            'term_max': term_max,
+            'inclusive': 'none'
         };
     }
 
